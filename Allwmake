@@ -1,0 +1,29 @@
+#!/bin/sh
+#cd ${0%/*} || exit 1    # Run from this directory
+# Parse arguments for library compilation without documentation by default
+targetType=libso
+
+if [ -d "$WM_PROJECT_USER_DIR" ]
+then
+    echo "installing convectiveFoam project into $WM_PROJECT_USER_DIR, ok? y/n"
+    read OK
+    if [ $OK != "y" ]
+    then
+        exit 1
+    fi
+else
+    echo "no OF user dir found"
+    exit 1
+fi
+
+
+# Compile  convectiveFoam
+mkdir -p $WM_PROJECT_USER_DIR/applications/solvers
+rsync -uav applications/solvers/convectiveFoam $WM_PROJECT_USER_DIR/applications/solvers
+(cd $WM_PROJECT_USER_DIR/applications/solvers/convectiveFoam/ && wmake)
+
+# Move the tutorials to the proper folder
+mkdir -p $WM_PROJECT_USER_DIR/tutorials/convectiveFoam
+rsync -uav tutorials/* $WM_PROJECT_USER_DIR/tutorials/convectiveFoam
+
+# ----------------------------------------------------------------- end-of-file
