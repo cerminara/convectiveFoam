@@ -1,8 +1,10 @@
 Solver for the incompressible Bounssinesq equation, based on pimpleFoam and
 buoyantBoussinesqPimpleFoam. See www.openfoam.org.
 
-In this solver, the buoyancy term is written in his original formulation to
-solve an error found while trying to reproduce the convective plume
+In this solver, the buoyancy term is written explicitly in his original
+formulation.
+
+The test case is analogous to the convective plume
 described in Whitehead et al. 2013, doi:10.1017/jfm.2013.330.
 
 /* ---- *\
