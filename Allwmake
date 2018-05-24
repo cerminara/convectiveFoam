@@ -21,6 +21,14 @@ fi
 mkdir -p $WM_PROJECT_USER_DIR/applications/solvers
 rsync -uav applications/solvers/convectiveFoam $WM_PROJECT_USER_DIR/applications/solvers
 (cd $WM_PROJECT_USER_DIR/applications/solvers/convectiveFoam/ && wmake)
+# Compile  convectivePrInf
+rsync -uav applications/solvers/convectivePrInf $WM_PROJECT_USER_DIR/applications/solvers
+(cd $WM_PROJECT_USER_DIR/applications/solvers/convectivePrInf/ && wmake)
+
+# Compile Utilities
+mkdir -p $WM_PROJECT_USER_DIR/applications/utilities
+rsync -uav applications/utilities/streamFunctionXZV $WM_PROJECT_USER_DIR/applications/utilities
+(cd $WM_PROJECT_USER_DIR/applications/utilities/streamFunctionXZV/ && wmake)
 
 # Move the tutorials to the proper folder
 mkdir -p $WM_PROJECT_USER_DIR/tutorials/convectiveFoam
