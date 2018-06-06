@@ -1,66 +1,56 @@
-volScalarField rAU(1.0/UEqn.A());
-surfaceScalarField rAUf("rAUf", fvc::interpolate(rAU));
-volVectorField HbyA(constrainHbyA(rAU*UEqn.H(), U, p));
-
-surfaceScalarField phig(-fvc::interpolate(beta*(T-TRef))*(g & mesh.Sf()));
-
-surfaceScalarField phiHbyA
-(
-    "phiHbyA",
-    fvc::flux(HbyA)
-//  + fvc::interpolate(rAU)*fvc::ddtCorr(U, phi)
-  + rAUf*phig
-);
-
-MRF.makeRelative(phiHbyA);
-
-// Update the pressure BCs to ensure flux consistency
-//adjustPhi(phiHbyA, U, p);
-constrainPressure(p, U, phiHbyA, rAUf, MRF);
-
-tmp<volScalarField> rAtU(rAU);
-
-if (pimple.consistent())
 {
-    rAtU = 1.0/max(1.0/rAU - UEqn.H1(), 0.1/rAU);
-    phiHbyA +=
-        fvc::interpolate(rAtU() - rAU)*fvc::snGrad(p)*mesh.magSf();
-    HbyA -= (rAU - rAtU())*fvc::grad(p);
-}
+    volScalarField rAU("rAU", 1.0/UEqn.A());
+    surfaceScalarField rAUf("rAUf", fvc::interpolate(rAU));
+    volVectorField HbyA(constrainHbyA(rAU*UEqn.H(), U, p));
 
 if (pimple.nCorrPISO() <= 1)
 {
     tUEqn.clear();
 }
 
-// Update the pressure BCs to ensure flux consistency
-constrainPressure(p, U, phiHbyA, rAtU(), MRF);
+    surfaceScalarField phig(-rAUf*fvc::interpolate(beta*(T-TRef))*(g & mesh.Sf()));
 
-// Non-orthogonal pressure corrector loop
-while (pimple.correctNonOrthogonal())
-{
-    // Pressure corrector
-    fvScalarMatrix pEqn
+    surfaceScalarField phiHbyA
     (
-        fvm::laplacian(rAtU(), p) == fvc::div(phiHbyA)
+        "phiHbyA",
+        fvc::flux(HbyA)
     );
 
-    pEqn.setReference(pRefCell, pRefValue);
+    MRF.makeRelative(phiHbyA);
 
-    pEqn.solve(mesh.solver(p.select(pimple.finalInnerIter())));
+    adjustPhi(phiHbyA, U, p);
 
-    if (pimple.finalNonOrthogonalIter())
+    phiHbyA += phig;
+
+    // Update the pressure BCs to ensure flux consistency
+    constrainPressure(p, U, phiHbyA, rAUf, MRF);
+
+    while (pimple.correctNonOrthogonal())
     {
-        phi = phiHbyA - pEqn.flux();
+        fvScalarMatrix pEqn
+        (
+            fvm::laplacian(rAUf, p) == fvc::div(phiHbyA)
+        );
+
+        pEqn.setReference(pRefCell, getRefCellValue(p, pRefCell));
+
+        pEqn.solve();
+
+        if (pimple.finalNonOrthogonalIter())
+        {
+            // Calculate the conservative fluxes
+            phi = phiHbyA - pEqn.flux();
+
+            // Explicitly relax pressure for momentum corrector
+            p.relax();
+
+            // Correct the momentum source with the pressure gradient flux
+            // calculated from the relaxed pressure
+            U = HbyA + rAU*fvc::reconstruct((phig - pEqn.flux())/rAUf);
+            U.correctBoundaryConditions();
+            fvOptions.correct(U);
+        }
     }
+
+    #include "continuityErrs.H"
 }
-
-#include "continuityErrs.H"
-
-// Explicitly relax pressure for momentum corrector
-p.relax();
-
-U = HbyA + rAtU()*(fvc::reconstruct(phig) - fvc::grad(p));
-//U = HbyA - rAtU()*fvc::grad(p);
-U.correctBoundaryConditions();
-fvOptions.correct(U);

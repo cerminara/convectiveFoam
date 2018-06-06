@@ -81,8 +81,8 @@ int main(int argc, char *argv[])
         // --- Pressure-velocity PIMPLE corrector loop
         while (pimple.loop())
         {
-            #include "UEqn.H"
             #include "TEqn.H"
+            #include "UEqn.H"
 
             // --- Pressure corrector loop
             while (pimple.correct())
@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
             }
         }
 
-        #include "momRes.H"
+        //#include "momRes.H"
 
         runTime.write();
 
