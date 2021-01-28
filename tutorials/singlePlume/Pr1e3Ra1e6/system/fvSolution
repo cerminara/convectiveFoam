@@ -54,10 +54,13 @@ PIMPLE
     nNonOrthogonalCorrectors 0;
     pRefCell        0;
     pRefValue       0;
-    residualControl
+    outerCorrectorResidualControl
     {
-        tolerance       3e-7;
-        relTol          0.;
+        "(p|T)"
+        {
+            tolerance       3e-7;
+            relTol          0.;
+        }
     }
 }
 
