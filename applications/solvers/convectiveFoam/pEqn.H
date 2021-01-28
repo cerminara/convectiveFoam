@@ -2,7 +2,7 @@ volScalarField rAU(1.0/UEqn.A());
 surfaceScalarField rAUf("rAUf", fvc::interpolate(rAU));
 volVectorField HbyA(constrainHbyA(rAU*UEqn.H(), U, p));
 
-surfaceScalarField phig(-fvc::interpolate(beta*(T-TRef))*(g & mesh.Sf()));
+surfaceScalarField phig(-fvc::interpolate(beta*(T-TRef))*(gf & mesh.Sf()));
 
 surfaceScalarField phiHbyA
 (
@@ -28,7 +28,7 @@ if (pimple.consistent())
     HbyA -= (rAU - rAtU())*fvc::grad(p);
 }
 
-if (pimple.nCorrPISO() <= 1)
+if (pimple.nCorrPiso() <= 1)
 {
     tUEqn.clear();
 }
@@ -47,7 +47,7 @@ while (pimple.correctNonOrthogonal())
 
     pEqn.setReference(pRefCell, pRefValue);
 
-    pEqn.solve(mesh.solver(p.select(pimple.finalInnerIter())));
+    pEqn.solve();
 
     if (pimple.finalNonOrthogonalIter())
     {

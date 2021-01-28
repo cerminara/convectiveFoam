@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
             IOobject::NO_READ
         );
 
-        if (phiHeader.headerOk())
+        if (phiHeader.typeHeaderOk<surfaceScalarField>(true))
         {
             mesh.readUpdate();
 
@@ -527,7 +527,7 @@ int main(int argc, char *argv[])
             streamFunctionXZ.write();
 
 
-            Info << "MaxXZO = " << max(mag(streamFunctionXZ.internalField())).value() << endl;
+            //Info << "MaxXZO = " << max(mag(streamFunctionXZ.internalField())).value() << endl;
             Info << "MaxXZV = " << max(mag(streamFunctionXZV.internalField())).value() << endl;
     
     	}

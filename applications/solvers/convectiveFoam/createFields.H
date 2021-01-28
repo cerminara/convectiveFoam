@@ -70,6 +70,15 @@ dimensionedScalar Pr("Pr", dimless, laminarTransport);
 // Turbulent Prandtl number
 dimensionedScalar Prt("Prt", dimless, laminarTransport);
 
+// Gravity
+dimensionedVector g0("g0", dimAcceleration, laminarTransport);
+dimensionedScalar gamma("gamma", dimless/dimLength, laminarTransport);
+
+Info << g0 << "   " << gamma << endl;
+//volVectorField g("g", g0*(scalar(1) + (g0 & mesh.C())/mag(g0)*gamma));
+surfaceVectorField gf("gf", g0*(scalar(1) + (g0 & mesh.Cf())/mag(g0)*gamma));
+Info << gf << endl;
+
 Info<< "Creating turbulence model\n" << endl;
 autoPtr<incompressible::turbulenceModel> turbulence
 (
@@ -77,22 +86,22 @@ autoPtr<incompressible::turbulenceModel> turbulence
 );
 
 // kinematic turbulent thermal thermal conductivity m2/s
-Info<< "Reading field alphat\n" << endl;
-volScalarField alphat
-(
-    IOobject
-    (
-        "alphat",
-        runTime.timeName(),
-        mesh,
-        IOobject::MUST_READ,
-        IOobject::AUTO_WRITE
-    ),
-    mesh
-);
+//Info<< "Reading field alphat\n" << endl;
+//volScalarField alphat
+//(
+//    IOobject
+//    (
+//        "alphat",
+//        runTime.timeName(),
+//        mesh,
+//        IOobject::MUST_READ,
+//        IOobject::AUTO_WRITE
+//    ),
+//    mesh
+//);
 
 
-#include "readGravitationalAcceleration.H"
+//#include "readGravitationalAcceleration.H"
 
 
 #include "createMRF.H"

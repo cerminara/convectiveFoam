@@ -56,17 +56,8 @@ PIMPLE
     pRefValue       0;
     residualControl
     {
-        T
-        {
-            tolerance       3e-7;
-            relTol          0.;
-        }
-        p 
-        {
-            tolerance       3e-7;
-            relTol          0.;
-        }
-    
+        tolerance       3e-7;
+        relTol          0.;
     }
 }
 

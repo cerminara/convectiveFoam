@@ -15,6 +15,11 @@ ddt(U) + div( U x U ) = -grad(p) + div(stress) - beta(T-TRef) g
 ddt(T) + div(U T) = div(diffusion)
 
 where beta is the thermal expansion.
+
+In this new version the gravity is a function of the vertical coordinate, in
+particular:
+g = g0 ( 1 + gamma (g0 . x)/|g0| )
+where g0 and gamma are given in the transportProperties dictionary.
 \* ---- */
 
 

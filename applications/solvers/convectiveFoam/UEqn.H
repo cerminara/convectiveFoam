@@ -25,7 +25,7 @@ if (pimple.momentumPredictor())
        -fvc::grad(p)
       + fvc::reconstruct
         (
-            -fvc::interpolate(beta*(T-TRef))*(g & mesh.Sf())
+            -fvc::interpolate(beta*(T-TRef))*(gf & mesh.Sf())
         )
     );
 
