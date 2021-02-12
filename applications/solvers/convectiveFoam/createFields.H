@@ -61,23 +61,25 @@ dimensionedScalar beta
     laminarTransport
 );
 
+// Thermal diffusivity [m2/s]
+dimensionedScalar alpha
+(
+    "alpha",
+    dimLength*dimLength/dimTime,
+    laminarTransport
+);
+
 // Reference temperature [K]
 dimensionedScalar TRef("TRef", dimTemperature, laminarTransport);
-
-// Laminar Prandtl number
-dimensionedScalar Pr("Pr", dimless, laminarTransport);
-
-// Turbulent Prandtl number
-dimensionedScalar Prt("Prt", dimless, laminarTransport);
 
 // Gravity
 dimensionedVector g0("g0", dimAcceleration, laminarTransport);
 dimensionedScalar gamma("gamma", dimless/dimLength, laminarTransport);
 
-Info << g0 << "   " << gamma << endl;
+//Info << g0 << "   " << gamma << endl;
 //volVectorField g("g", g0*(scalar(1) + (g0 & mesh.C())/mag(g0)*gamma));
 surfaceVectorField gf("gf", g0*(scalar(1) + (g0 & mesh.Cf())/mag(g0)*gamma));
-Info << gf << endl;
+Info << "min(g) = " << gMin(gf) << ",    max(g) = " << gMax(gf) << endl;
 
 Info<< "Creating turbulence model\n" << endl;
 autoPtr<incompressible::turbulenceModel> turbulence

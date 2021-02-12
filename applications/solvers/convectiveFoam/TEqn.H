@@ -2,13 +2,13 @@
     //alphat = turbulence->nut()/Prt;
     //alphat.correctBoundaryConditions();
 
-    volScalarField alphaEff("alphaEff", turbulence->nu()/Pr);
+    //volScalarField alphaEff("alphaEff", turbulence->nu()/Pr);
 
     fvScalarMatrix TEqn
     (
         fvm::ddt(T)
       + fvm::div(phi, T)
-      - fvm::laplacian(alphaEff, T)
+      - fvm::laplacian(alpha, T)
      ==
         fvOptions(T)
     );
